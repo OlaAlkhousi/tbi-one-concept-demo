@@ -104,6 +104,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div className="flex min-h-0 flex-1">
           <main id="main" className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-8">
             <div className="mx-auto w-full max-w-[1400px]">{children}</div>
+            <footer className="no-print mx-auto mt-10 w-full max-w-[1400px] border-t pt-4 text-[11px] text-muted-foreground">
+              <span className="font-medium text-warning">Concept demo, fictional data.</span> TBI ONE is an independent student concept, not an official TBI product. It is not connected to any company system.
+            </footer>
           </main>
           {isDesktop && assistantOpen && (
             <aside className="no-print sticky top-14 h-[calc(100dvh-3.5rem)] w-[400px] shrink-0 border-l bg-card animate-in slide-in-from-right-4 fade-in" aria-label="TBI ONE Assistant">

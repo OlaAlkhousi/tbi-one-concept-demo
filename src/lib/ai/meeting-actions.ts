@@ -91,10 +91,12 @@ function suggestOwner(s: S, meeting: Meeting, ap: ActionPoint): { owner: Employe
   return { owner: best.e, reason: `${best.e.firstName} ${parts.join("; ")}.` };
 }
 
+/** The next milestone-like meeting of the project (a review or demo), else the next project meeting. */
 function nextProjectMeeting(s: S, meeting: Meeting): Meeting | undefined {
-  return s.meetings
+  const upcoming = s.meetings
     .filter((m) => m.projectId && m.projectId === meeting.projectId && m.start > meeting.end)
-    .sort((a, b) => a.start.localeCompare(b.start))[0];
+    .sort((a, b) => a.start.localeCompare(b.start));
+  return upcoming.find((m) => /review|demo|steering/i.test(m.title)) ?? upcoming[0];
 }
 
 /** Subtract working days (skip weekends) from a date. */

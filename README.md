@@ -41,6 +41,17 @@ TBI ONE explores what happens if each employee gets one personal layer on top of
 | News | Personalised fictional news with categories and bookmarks. |
 | Search | Ctrl+K searches projects, people, tasks, meetings, documents, issues and logbook entries, grouped, with permissions applied. |
 
+## Screenshots
+
+| | |
+| --- | --- |
+| ![Meeting action plan](docs/screenshots/action-plan.png) | ![AI project insights](docs/screenshots/project-insights.png) |
+| Meeting action plan with reasons and duplicate detection | AI insights with evidence |
+| ![Assistant](docs/screenshots/assistant.png) | ![Dark mode inbox](docs/screenshots/inbox.png) |
+| Assistant with sources, next to the dashboard | Unified inbox in dark mode |
+| ![Calendar](docs/screenshots/calendar.png) | ![Restricted project](docs/screenshots/restricted.png) |
+| Week view | A restricted project shows only who to ask |
+
 ## Demo users
 
 Use the switcher in the top right. It is a simulation, not real sign-in.

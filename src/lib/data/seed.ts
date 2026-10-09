@@ -1,4 +1,4 @@
-import { addDaysISO, mondayOf, toISODate, zonedISO } from "../time";
+import { addDaysISO, formatDate, mondayOf, toISODate, zonedISO } from "../time";
 import type {
   AccessGrant,
   AccessRequest,
@@ -386,7 +386,7 @@ export function createSeed(now: Date = new Date()): SeedData {
       notes: "Lucas reported two double bookings last week: both headsets were in maintenance. Emma showed wireframes for the confirmation screen.",
       summary:
         "The team reviewed the prototype. Facility Services reported reservations of headsets that were in maintenance, so the availability check needs improving before the pilot. Users also re-book because they don't get a confirmation. The team agreed that loans longer than 3 working days need approval, and that a working prototype should be ready for review on " +
-        wd(2) +
+        formatDate(wd(2), "EEEE d MMMM") +
         ".",
       keyPoints: [
         "Two double bookings last week were caused by headsets in maintenance.",
