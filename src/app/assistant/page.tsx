@@ -25,9 +25,9 @@ export default function AssistantPage() {
   const docs = visibleDocuments(s).slice(0, 3);
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[1fr_300px]">
+    <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
       <h1 className="sr-only">AI workspace</h1>
-      <section className="flex h-[calc(100dvh-8.5rem)] min-h-[520px] flex-col overflow-hidden rounded-2xl border bg-card shadow-card">
+      <section className="flex h-[calc(100dvh-8.5rem)] min-h-[520px] min-w-0 flex-col overflow-hidden rounded-2xl border bg-card shadow-card">
         <AssistantChat variant="page" />
       </section>
 

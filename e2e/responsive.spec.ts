@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { open } from "./helpers";
 
-for (const route of ["/", "/inbox", "/calendar", "/projects", "/hours", "/logbook"]) {
+for (const route of ["/", "/inbox", "/calendar", "/tasks", "/projects", "/projects/p-vr", "/github", "/knowledge", "/learning", "/logbook", "/hours", "/requests", "/people", "/news", "/settings", "/assistant", "/calendar/m-vr-discussion"]) {
   test(`${route} has no horizontal scroll on a phone`, async ({ page }) => {
     await open(page, route);
     await expect(page.locator("main h1").first()).toBeVisible();

@@ -26,9 +26,11 @@ test("global search finds connected records and respects permissions", async ({ 
   await page.keyboard.press("Control+k");
   await page.getByTestId("command-input").fill("VR lending");
   const results = page.getByTestId("search-result");
-  await expect(results.filter({ hasText: "VR Equipment Lending Service" })).toBeVisible();
-  await expect(results.filter({ hasText: "Equipment Lending Procedure" })).toBeVisible();
-  await expect(results.filter({ hasText: "VR Equipment Lending — Project Discussion" })).toBeVisible();
+  const result = (value: string) => page.locator(`[data-testid="search-result"][data-value="${value}"]`);
+  await expect(result("Projects-p-vr")).toBeVisible();
+  await expect(result("Meetings-m-vr-discussion")).toBeVisible();
+  await expect(result("Documents-d-equipment")).toBeVisible();
+  await expect(result("GitHub issues-i-vr-39")).toBeVisible();
 
   await page.getByTestId("command-input").fill("segmentation");
   await expect(results).toHaveCount(0);

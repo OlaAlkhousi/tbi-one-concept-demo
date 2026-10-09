@@ -23,7 +23,7 @@ export function FilterNav({ active, counts, onChange, className }: { active: Inb
 
   return (
     <nav aria-label="Inbox filters" className={cn("flex min-w-0 flex-col border-b @5xl/inbox:border-r @5xl/inbox:border-b-0", className)}>
-      <div ref={rowRef} className="flex gap-1 overflow-x-auto p-2 @5xl/inbox:flex-col @5xl/inbox:overflow-visible @5xl/inbox:p-3">
+      <div ref={rowRef} className="relative flex gap-1 overflow-x-auto p-2 @5xl/inbox:flex-col @5xl/inbox:overflow-visible @5xl/inbox:p-3">
         {INBOX_FILTERS.map((f) => {
           const meta = FILTER_META[f];
           const Icon = meta.icon;

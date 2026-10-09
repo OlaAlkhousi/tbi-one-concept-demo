@@ -27,7 +27,7 @@ export default defineConfig({
     channel: channel === "chromium" ? undefined : channel,
   },
   projects: [
-    { name: "desktop", use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 }, channel: channel === "chromium" ? undefined : channel } },
+    { name: "desktop", testIgnore: /responsive\.spec\.ts/, use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 }, channel: channel === "chromium" ? undefined : channel } },
     { name: "mobile", testMatch: /responsive\.spec\.ts/, use: { ...devices["Pixel 7"], channel: channel === "chromium" ? undefined : channel } },
   ],
   webServer: process.env.PLAYWRIGHT_BASE_URL
