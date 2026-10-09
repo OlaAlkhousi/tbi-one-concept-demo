@@ -42,6 +42,9 @@ import { useS } from "@/components/common/hooks";
 import { AiBadge } from "@/components/common/layout";
 import { RichText } from "@/components/common/rich-text";
 
+/** Stable empty list: a new [] in a Zustand selector would re-render forever. */
+const NO_MESSAGES: AssistantMessage[] = [];
+
 const SUGGESTIONS: Record<string, string[]> = {
   intern: [
     "What should I focus on today?",
@@ -225,7 +228,7 @@ export function AssistantChat({ variant = "panel", onClose }: { variant?: "panel
   const s = useS();
   const user = me(s);
   const router = useRouter();
-  const messages = useWorkspace((x) => x.conversations[x.currentUserId] ?? []);
+  const messages = useWorkspace((x) => x.conversations[x.currentUserId] ?? NO_MESSAGES);
   const add = useWorkspace((x) => x.addAssistantMessage);
   const clear = useWorkspace((x) => x.clearConversation);
   const pageContext = useWorkspace((x) => x.pageContext);
