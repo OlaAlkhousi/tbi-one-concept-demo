@@ -114,7 +114,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </div>
       {!isDesktop && (
         <Sheet open={assistantOpen} onOpenChange={setAssistantOpen}>
-          <SheetContent side="right" className="w-full p-0 sm:max-w-md" showCloseButton={false}>
+          <SheetContent side="right" className="p-0 data-[side=right]:w-full data-[side=right]:sm:max-w-md" showCloseButton={false}>
             <SheetTitle className="sr-only">TBI ONE Assistant</SheetTitle>
             <AssistantChat onClose={() => setAssistantOpen(false)} />
           </SheetContent>

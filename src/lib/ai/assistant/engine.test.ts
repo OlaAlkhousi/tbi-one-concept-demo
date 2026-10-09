@@ -28,6 +28,8 @@ describe("assistant intent routing", () => {
     ["What happened while I was away?", "catch-up"],
     ["Draft a GitHub issue", "draft-issue"],
     ["Open the hours page", "navigate"],
+    ["Tell me about Priya Raman", "person"],
+    ["Who is Lucas?", "person"],
   ];
   it.each(cases)("%s → %s", (q, intent) => {
     expect(ask(q).intent).toBe(intent);
@@ -75,6 +77,12 @@ describe("assistant permissions", () => {
   it("does not quote restricted documents", () => {
     const r = ask("Where can I find the smart building security architecture?");
     expect(r.text).not.toMatch(/segmentation|credentials|60 seconds/i);
+  });
+
+  it("does not list restricted projects in a colleague's profile", () => {
+    const r = ask("Tell me about Daan Verhoef");
+    expect(r.text).not.toMatch(/Smart Building/);
+    expect(ask("Tell me about Daan Verhoef", "u-thomas").text).toMatch(/Smart Building/);
   });
 
   it("lets a team member see the same project", () => {

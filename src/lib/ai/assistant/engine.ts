@@ -629,6 +629,29 @@ function help(c: Ctx): AssistantReply {
   };
 }
 
+function aboutPerson(c: Ctx): AssistantReply {
+  const e = detectPerson(c.q);
+  if (!e) return whoKnows(c);
+  // Professional profile only; projects are filtered by what the viewer may see.
+  const projects = c.s.projects.filter((p) => (p.teamIds.includes(e.id) || p.ownerId === e.id) && canViewProject(c.s, c.user.id, p));
+  const approves = (e.approves?.projectIds ?? []).map((id) => c.s.projects.find((p) => p.id === id)?.name).filter(Boolean) as string[];
+  const manager = employeeById(e.managerId);
+  return {
+    intent: "person",
+    text: `**${e.name}** is ${e.role} in ${e.department} (${e.location}). ${e.expertise}
+
+- **Skills:** ${list(e.skills)}
+- **Responsible for:** ${list(e.responsibilities)}${projects.length ? `
+- **Projects:** ${list(projects.map((p) => p.name))}` : ""}${approves.length ? `
+- **Approves access for:** ${list(approves)}` : ""}${manager ? `
+- **Manager:** ${manager.name}` : ""}
+
+Currently ${e.availability.replace("-", " ")}.`,
+    sources: [src.person(e), ...projects.slice(0, 3).map(src.project)],
+    actions: e.id === c.user.id ? undefined : [action(`Draft a Teams message to ${e.firstName}`, { kind: "draft-message", channel: "teams", toId: e.id, subject: "Quick question", body: `Hi ${e.firstName}, I'm ${c.user.firstName} (${c.user.role}). Do you have a moment for a quick question?` })],
+  };
+}
+
 // ─── Router ──────────────────────────────────────────────────────────────────
 
 type Rule = { name: string; test: (q: string, c: Ctx) => boolean; run: (c: Ctx) => AssistantReply };
@@ -637,6 +660,7 @@ const RULES: Rule[] = [
   { name: "tasks-from-meeting", test: (q) => /(create|make|turn).*(tasks?|issues?|actions?).*(meeting|this)|action plan/.test(q), run: tasksFromMeeting },
   { name: "draft-issue", test: (q) => /(draft|create|open|write).*(github )?issue/.test(q), run: draftIssue },
   { name: "create-task", test: (q) => /^(please )?(create|add|make)\s+(a\s+)?(new\s+)?task/.test(q), run: createTaskFromText },
+  { name: "person", test: (q, c) => /^(who is|who's|tell me about|what does|what do you know about)\b/.test(q) && !/(responsible|owner|approve|in charge)/.test(q) && Boolean(detectPerson(c.q)), run: aboutPerson },
   { name: "approver", test: (q) => /who (can|should|will|must)? ?approve|who decides|permission to access|who.*(grant|give).*access/.test(q), run: approver },
   { name: "access", test: (q) => /(access request|request access|prepare.*access|get access|need access)/.test(q), run: accessRequest },
   { name: "draft-message", test: (q) => /(draft|prepare|write|compose).*(reply|message|email|mail|teams)|message for my|reply to/.test(q), run: draftMessage },
