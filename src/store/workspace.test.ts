@@ -50,6 +50,11 @@ describe("Demo A — meeting to tasks and GitHub issues", () => {
     expect(st().activity[0].text).toMatch(/turned VR Equipment Lending — Project Discussion into 3 follow-up tasks/);
   });
 
+  it("removes references to a deleted task", () => {
+    st().deleteTask("t-ola-2");
+    expect(st().issues.find((i) => i.id === "i-vr-38")?.taskId).toBeUndefined();
+  });
+
   it("closes the linked issue when the task is completed", () => {
     st().setTaskStatus("t-ola-2", "done");
     expect(st().issues.find((i) => i.id === "i-vr-38")?.state).toBe("closed");

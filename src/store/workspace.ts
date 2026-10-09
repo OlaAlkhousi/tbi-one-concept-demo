@@ -187,7 +187,14 @@ export const useWorkspace = create<Workspace>()(
           }
         },
 
-        deleteTask: (id) => set((s) => ({ tasks: s.tasks.filter((t) => t.id !== id) })),
+        deleteTask: (id) =>
+          set((s) => ({
+            tasks: s.tasks.filter((t) => t.id !== id),
+            // Keep references consistent: no message, meeting or issue points at a deleted task.
+            messages: s.messages.map((m) => (m.linkedTaskIds.includes(id) ? { ...m, linkedTaskIds: m.linkedTaskIds.filter((x) => x !== id) } : m)),
+            meetings: s.meetings.map((m) => (m.followUpTaskIds.includes(id) ? { ...m, followUpTaskIds: m.followUpTaskIds.filter((x) => x !== id) } : m)),
+            issues: s.issues.map((i) => (i.taskId === id ? { ...i, taskId: undefined } : i)),
+          })),
 
         createIssue: (draft) => {
           const s = get();
