@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { NOW, stateFor } from "../test-utils";
 import { dateOf, toISODate } from "../time";
 import { morningBriefing } from "./briefing";
-import { projectInsights } from "./insights";
+import { projectInsights, similarProjects } from "./insights";
 import { learningRecommendations } from "./learning";
 import { generateActionPlan, shortTitle } from "./meeting-actions";
 import { generateWorkSummary } from "./work-summary";
@@ -58,6 +58,16 @@ describe("project insights", () => {
     for (const i of insights) expect(i.evidence.length).toBeGreaterThan(0);
     expect(insights.some((i) => i.title.includes("Approval"))).toBe(true);
     expect(insights.some((i) => i.title.includes("Availability check ignores maintenance periods"))).toBe(true);
+  });
+});
+
+describe("similar projects", () => {
+  it("never suggests a project the user cannot see", () => {
+    const s = stateFor("u-ola");
+    const vr = s.projects.find((p) => p.id === "p-vr")!;
+    expect(similarProjects(s, vr).map((x) => x.project.id)).not.toContain("p-smart");
+    const daan = stateFor("u-daan");
+    expect(similarProjects(daan, vr).map((x) => x.project.id)).toContain("p-smart");
   });
 });
 

@@ -1,5 +1,6 @@
 import type { S } from "../selectors";
 import { overdueTasks } from "../selectors";
+import { canViewProject } from "../permissions";
 import { toISODate } from "../time";
 import type { ID, Priority, Project } from "../types";
 import { includesAny, list, plural, stems } from "./text";
@@ -178,9 +179,10 @@ export function projectInsights(s: S, projectId: ID, today = toISODate()): Insig
   return out.sort((a, b) => rank[a.impact] - rank[b.impact]).slice(0, 6);
 }
 
+/** Other projects with overlapping technology — only those the current user may see. */
 export function similarProjects(s: S, project: Project): { project: Project; shared: string[] }[] {
   return s.projects
-    .filter((p) => p.id !== project.id)
+    .filter((p) => p.id !== project.id && canViewProject(s, s.currentUserId, p))
     .map((p) => ({ project: p, shared: p.technologies.filter((t) => project.technologies.includes(t)) }))
     .filter((x) => x.shared.length > 0)
     .sort((a, b) => b.shared.length - a.shared.length);

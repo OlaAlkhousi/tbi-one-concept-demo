@@ -223,7 +223,13 @@ export const useWorkspace = create<Workspace>()(
           return issue;
         },
 
-        setIssueState: (id, state) => set((s) => ({ issues: s.issues.map((i) => (i.id === id ? { ...i, state } : i)) })),
+        setIssueState: (id, state) => {
+          const issue = get().issues.find((i) => i.id === id);
+          if (!issue || issue.state === state) return;
+          set((s) => ({ issues: s.issues.map((i) => (i.id === id ? { ...i, state } : i)) }));
+          const project = get().projects.find((p) => p.repoIds.includes(issue.repoId));
+          log({ source: "github", text: `${state === "closed" ? "closed" : "reopened"} simulated issue #${issue.number} ${issue.title}`, href: `/github?issue=${id}`, projectId: project?.id });
+        },
 
         createActionPlan: (meetingId, drafts, repoId) => {
           const meeting = get().meetings.find((m) => m.id === meetingId);
