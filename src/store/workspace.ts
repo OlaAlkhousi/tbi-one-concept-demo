@@ -406,7 +406,7 @@ export const useWorkspace = create<Workspace>()(
         askAssistant: (prompt) => set({ assistantOpen: true, pendingAssistantPrompt: prompt }),
         consumePendingPrompt: () => {
           const p = get().pendingAssistantPrompt;
-          if (p) set({ pendingAssistantPrompt: null });
+          if (p !== null) set({ pendingAssistantPrompt: null });
           return p;
         },
         setCommandOpen: (open) => set({ commandOpen: open }),

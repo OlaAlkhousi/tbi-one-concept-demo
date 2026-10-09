@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { GitBranch } from "lucide-react";
@@ -32,28 +32,36 @@ type FormState = z.input<typeof schema> & { alsoCreateIssue: boolean };
 
 export function TaskDialog() {
   const { taskDialog, closeTaskDialog } = useUi();
+  return (
+    <Dialog open={taskDialog.open} onOpenChange={(o) => !o && closeTaskDialog()}>
+      <DialogContent className="sm:max-w-lg">
+        {/* Mounted per opening, so the form always starts from the current initial values. */}
+        {taskDialog.open && <TaskForm key={taskDialog.editId ?? "new"} />}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function TaskForm() {
+  const { taskDialog, closeTaskDialog } = useUi();
   const s = useS();
   const createTask = useWorkspace((x) => x.createTask);
   const updateTask = useWorkspace((x) => x.updateTask);
   const editing = taskDialog.editId ? s.tasks.find((t) => t.id === taskDialog.editId) : undefined;
-  const [form, setForm] = useState<FormState>(() => blank());
+  const [form, setForm] = useState<FormState>(() => {
+    if (editing) return { title: editing.title, description: editing.description, projectId: editing.projectId, assigneeId: editing.assigneeId, priority: editing.priority, due: editing.due, alsoCreateIssue: false };
+    const i = taskDialog.initial ?? {};
+    return {
+      title: i.title ?? "",
+      description: i.description ?? "",
+      projectId: i.projectId,
+      assigneeId: i.assigneeId ?? s.currentUserId,
+      priority: i.priority ?? "medium",
+      due: i.due ?? addDaysISO(toISODate(), 3),
+      alsoCreateIssue: Boolean(i.alsoCreateIssue),
+    };
+  });
   const [errors, setErrors] = useState<Record<string, string>>({});
-
-  function blank(): FormState {
-    return { title: "", description: "", projectId: undefined, assigneeId: s.currentUserId, priority: "medium", due: addDaysISO(toISODate(), 3), alsoCreateIssue: false };
-  }
-
-  useEffect(() => {
-    if (!taskDialog.open) return;
-    setErrors({});
-    if (editing) {
-      setForm({ title: editing.title, description: editing.description, projectId: editing.projectId, assigneeId: editing.assigneeId, priority: editing.priority, due: editing.due, alsoCreateIssue: false });
-    } else {
-      const i = taskDialog.initial ?? {};
-      setForm({ ...blank(), ...i, description: i.description ?? "", alsoCreateIssue: Boolean(i.alsoCreateIssue) });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [taskDialog.open, taskDialog.editId]);
 
   const projects = visibleProjects(s);
   const project = projects.find((p) => p.id === form.projectId);
@@ -90,8 +98,7 @@ export function TaskDialog() {
   }
 
   return (
-    <Dialog open={taskDialog.open} onOpenChange={(o) => !o && closeTaskDialog()}>
-      <DialogContent className="sm:max-w-lg">
+    <>
         <DialogHeader>
           <DialogTitle>{editing ? "Edit task" : "New task"}</DialogTitle>
           <DialogDescription>{editing ? "Changes are saved in this demo workspace." : "Tasks appear in My Tasks, the project and the dashboard."}</DialogDescription>
@@ -167,7 +174,6 @@ export function TaskDialog() {
             <Button type="submit">{editing ? "Save changes" : "Create task"}</Button>
           </DialogFooter>
         </form>
-      </DialogContent>
-    </Dialog>
+    </>
   );
 }

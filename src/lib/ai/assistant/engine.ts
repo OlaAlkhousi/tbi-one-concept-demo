@@ -1,4 +1,4 @@
-import { courses, documents, repositories } from "../../data/catalog";
+import { documents, repositories } from "../../data/catalog";
 import { employees } from "../../data/people";
 import { entriesForWeek, formatHours, hoursByProject, totalHours, weekStatus } from "../../hours";
 import { canViewDocument, canViewMeeting, canViewProject } from "../../permissions";
@@ -12,10 +12,8 @@ import {
   myOpenTasks,
   myProjects,
   overdueTasks,
-  pendingApprovals,
   projectProgress,
   todaysPriorities,
-  visiblePullRequests,
   type S,
 } from "../../selectors";
 import { addDaysISO, dateOf, formatDate, formatTime, mondayOf, toISODate, weekDates } from "../../time";

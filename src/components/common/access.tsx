@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Clock, Lock, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -29,17 +29,19 @@ function useResource(type?: ResourceType, id?: ID) {
 
 export function AccessRequestDialog() {
   const { accessDialog, closeAccessDialog } = useUi();
+  return (
+    <Dialog open={accessDialog.open} onOpenChange={(o) => !o && closeAccessDialog()}>
+      <DialogContent className="sm:max-w-md">{accessDialog.open && <AccessForm key={accessDialog.resourceId} />}</DialogContent>
+    </Dialog>
+  );
+}
+
+function AccessForm() {
+  const { accessDialog, closeAccessDialog } = useUi();
   const requestAccess = useWorkspace((s) => s.requestAccess);
   const resource = useResource(accessDialog.resourceType, accessDialog.resourceId);
-  const [reason, setReason] = useState("");
+  const [reason, setReason] = useState(accessDialog.reason ?? "");
   const [error, setError] = useState<string>();
-
-  useEffect(() => {
-    if (accessDialog.open) {
-      setReason(accessDialog.reason ?? "");
-      setError(undefined);
-    }
-  }, [accessDialog.open, accessDialog.reason]);
 
   if (!resource) return null;
   const approver = employeeById(resource.approverId);
@@ -56,8 +58,7 @@ export function AccessRequestDialog() {
   }
 
   return (
-    <Dialog open={accessDialog.open} onOpenChange={(o) => !o && closeAccessDialog()}>
-      <DialogContent className="sm:max-w-md">
+    <>
         <DialogHeader>
           <DialogTitle>Request access</DialogTitle>
           <DialogDescription>
@@ -84,8 +85,7 @@ export function AccessRequestDialog() {
             </Button>
           </DialogFooter>
         </form>
-      </DialogContent>
-    </Dialog>
+    </>
   );
 }
 

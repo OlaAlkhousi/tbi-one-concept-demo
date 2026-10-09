@@ -30,7 +30,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { demoProvider, fetchLlmStatus, llmProvider, type LlmStatus } from "@/lib/ai/assistant/provider";
-import { employeeById, me } from "@/lib/selectors";
+import { employeeById, me, type S } from "@/lib/selectors";
 import { repositories } from "@/lib/data/catalog";
 import { formatDate } from "@/lib/time";
 import type { AssistantAction, AssistantMessage, SourceCard } from "@/lib/types";
@@ -254,17 +254,17 @@ export function AssistantChat({ variant = "panel", onClose }: { variant?: "panel
     setThinking(true);
     const provider = mode === "llm" && llm.enabled ? llmProvider : demoProvider;
     // Read the latest state at send time (not the render-time snapshot).
-    const reply = await provider.answer(useWorkspace.getState() as never, q, pageContext);
+    const reply = await provider.answer(useWorkspace.getState() as unknown as S, q, pageContext);
     add({ id: uid("m"), role: "assistant", text: reply.text, at: new Date().toISOString(), sources: reply.sources, actions: reply.actions, followUps: reply.followUps, engine: reply.engine });
     setThinking(false);
   }
 
   // A prompt queued from elsewhere (command palette, dashboard buttons).
   useEffect(() => {
-    if (pending) {
+    if (pending !== null) {
       const p = consumePending();
-      if (p) void send(p);
-      else inputRef.current?.focus();
+      // Deferred so the send runs as a callback, not synchronously inside the effect.
+      queueMicrotask(() => (p ? void send(p) : inputRef.current?.focus()));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pending]);

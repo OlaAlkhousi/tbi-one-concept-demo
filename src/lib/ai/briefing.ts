@@ -89,8 +89,8 @@ export function morningBriefing(s: S, now = new Date()): Briefing {
 
   const firstMsg = attention[0];
   if (firstMsg) {
-    const from = employees.find((e) => e.id === firstMsg.fromId)?.firstName ?? firstMsg.fromName;
-    lines.push({ text: `${from} is waiting: “${firstMsg.subject}”.`, href: `/inbox?m=${firstMsg.id}` });
+    const from = employees.find((e) => e.id === firstMsg.fromId)?.firstName;
+    lines.push({ text: from ? `${from} is waiting for you: “${firstMsg.subject}”.` : `${firstMsg.fromName}: “${firstMsg.subject}”.`, href: `/inbox?m=${firstMsg.id}` });
   }
 
   return { greeting: `${greeting(now)}, ${user.firstName}.`, headline, lines: lines.slice(0, 6) };
